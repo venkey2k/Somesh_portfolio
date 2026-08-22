@@ -1017,6 +1017,34 @@
       .meteor-field{opacity:.28}
       .blob{width:230px;height:230px;filter:blur(55px)}
     }
+
+/* ===== FINAL MOBILE WIDTH / OVERFLOW FIX ===== */
+html,body{max-width:100%;overflow-x:hidden;}
+@media (max-width:980px){
+  .wrap{width:min(100% - 30px,1180px);max-width:100%;}
+  .hero,.hero>div,.card,.grid-2,.grid-3,.grid-4,.why,.road,.contact-grid{min-width:0;max-width:100%;}
+  h1{width:100%;max-width:100%;font-size:clamp(38px,11vw,60px);line-height:.94;letter-spacing:-1.2px;overflow-wrap:anywhere;word-break:normal;}
+  .lead,.role,.eyebrow{max-width:100%;overflow-wrap:anywhere;}
+  .holo{width:min(78vw,330px);max-width:calc(100vw - 44px);}
+  .ring{width:100%;max-width:100%;}
+  .floaty{max-width:125px;}
+  .f1{left:-5px}.f2{right:-5px}.f3{left:0}
+}
+@media (max-width:560px){
+  .wrap{width:calc(100% - 28px);}
+  .hud{width:calc(100% - 12px);}
+  .hero{padding-left:0;padding-right:0;}
+  h1{font-size:clamp(37px,11.8vw,54px);letter-spacing:-1px;}
+  .holo{width:min(72vw,285px);max-width:285px;}
+  .floaty{font-size:9px;max-width:112px;}
+  .f1{left:-2px}.f2{right:-2px}.f3{left:2px}
+}
+@media (max-width:380px){
+  .wrap{width:calc(100% - 24px);}
+  h1{font-size:36px;letter-spacing:-.8px;}
+  .holo{width:245px;}
+}
+
   </style>
 
 </head>
