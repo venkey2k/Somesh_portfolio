@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Someshwaran G | Neural Portfolio — Aspiring AI & ML Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    :root {
+      --void: #05060c;
+      --ink: #0b0d18;
+      --panel: rgba(12, 16, 32, .72);
+      --line: rgba(120, 220, 255, .16);
+      --text: #edf3ff;
+      --mute: #8ea0c4;
+      --ice: #7af6ff;
+      --blue: #4f8cff;
+      --violet: #9b6bff;
+      --pink: #ff5dce;
+      --gold: #ffc857;
+      --ok: #3dffb0;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Outfit, sans-serif;
+      background: var(--void);
+      color: var(--text);
+      overflow-x: hidden;
+      cursor: none;
+    }
+    a, button { cursor: none; }
+    ::selection { background: var(--ice); color: #041018; }
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(var(--ice), var(--violet));
+      border-radius: 20px;
+    }
+
+    .cursor, .cursor-dot {
+      position: fixed; top: 0; left: 0; pointer-events: none; z-index: 200;
+      border-radius: 50%; transform: translate(-50%, -50%);
+      mix-blend-mode: screen;
+    }
+    .cursor {
+      width: 42px; height: 42px; border: 1px solid rgba(122,246,255,.7);
+      transition: width .25s, height .25s, background .25s, border-color .25s;
+    }
+    .cursor.grow { width: 72px; height: 72px; background: rgba(122,246,255,.08); }
+    .cursor-dot { width: 6px; height: 6px; background: var(--ice); }
+
+    #loader {
+      position: fixed; inset: 0; z-index: 300;
+      background: #03040a;
+      display: grid; place-items: center;
+      transition: opacity .7s ease, visibility .7s ease;
+    }
+    #loader.hide { opacity: 0; visibility: hidden; }
+    .boot {
+      width: min(520px, 88vw); text-align: center;
+    }
+    .boot b {
+      font-family: Syne, sans-serif; font-size: 28px; letter-spacing: 2px;
+    }
+    .boot p { color: var(--mute); margin: 10px 0 18px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+    .boot-bar { height: 4px; background: #151a2e; overflow: hidden; border-radius: 99px; }
+    .boot-bar span {
+      display: block; height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--ice), var(--violet), var(--pink));
+      animation: load 2.1s ease forwards;
+    }
+
+    #stars, #net {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    }
+    .blob {
+      position: fixed; width: 480px; height: 480px; border-radius: 50%;
+      filter: blur(90px); pointer-events: none; z-index: 0; opacity: .35;
+      animation: drift 16s ease-in-out infinite alternate;
+    }
+    .b1 { background: #123b6b; top: -120px; left: -80px; }
+    .b2 { background: #3a1468; right: -120px; top: 30%; animation-delay: -7s; }
+    .b3 { background: #08362f; bottom: -160px; left: 30%; animation-delay: -12s; }
+
+    .progress {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0;
+      background: linear-gradient(90deg, var(--ice), var(--pink));
+      z-index: 80; box-shadow: 0 0 16px var(--ice);
+    }
+
+    .hud {
+      position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+      width: min(1240px, calc(100% - 20px));
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px 10px 12px;
+      background: rgba(6,8,16,.62);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+      border-radius: 18px;
+      z-index: 70;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .mark {
+      width: 40px; height: 40px; display: grid; place-items: center;
+      border-radius: 12px; font-family: Syne, sans-serif;
+      background: linear-gradient(135deg, var(--ice), var(--blue) 50%, var(--violet));
+      color: #061018; box-shadow: 0 0 24px rgba(122,246,255,.35);
+    }
+    .brand small { display: block; color: var(--mute); font-size: 11px; font-weight: 400; letter-spacing: 1.4px; }
+    .links { display: flex; gap: 4px; list-style: none; }
+    .links a {
+      color: var(--mute); text-decoration: none; font-size: 13px;
+      padding: 8px 11px; border-radius: 10px; transition: .25s;
+    }
+    .links a:hover { color: #fff; background: rgba(122,246,255,.08); }
+    .nav-cta {
+      text-decoration: none; color: #061018; font-weight: 700; font-size: 13px;
+      background: linear-gradient(135deg, var(--ice), #4ad6ff);
+      padding: 10px 14px; border-radius: 12px;
+    }
+
+    .rail {
+      position: fixed; left: 18px; top: 50%; transform: translateY(-50%);
+      z-index: 60; display: flex; flex-direction: column; gap: 14px;
+    }
+    .rail a {
+      width: 11px; height: 11px; border-radius: 50%;
+      border: 1px solid rgba(122,246,255,.5);
+      background: transparent; position: relative;
+    }
+    .rail a.active { background: var(--ice); box-shadow: 0 0 12px var(--ice); }
+    .rail a span {
+      position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+      font-size: 11px; color: var(--mute); white-space: nowrap; opacity: 0;
+      font-family: 'IBM Plex Mono', monospace; transition: .25s;
+    }
+    .rail a:hover span { opacity: 1; color: var(--ice); }
+
+    .wrap { position: relative; z-index: 2; width: min(1180px, calc(100% - 36px)); margin: 0 auto; }
+
+    .hero {
+      min-height: 100vh; display: grid; grid-template-columns: 1.15fr .85fr;
+      gap: 40px; align-items: center; padding: 140px 0 70px;
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      letter-spacing: 2px; text-transform: uppercase; color: var(--ice);
+      margin-bottom: 16px;
+    }
+    .live {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--ok);
+      box-shadow: 0 0 12px var(--ok); animation: pulse 1.4s infinite;
+    }
+    h1 {
+      font-family: Syne, sans-serif; font-size: clamp(42px, 7vw, 82px);
+      line-height: .92; letter-spacing: -1.5px; margin-bottom: 16px;
+    }
+    .glitch {
+      background: linear-gradient(90deg, #fff, var(--ice), var(--violet), #fff);
+      background-size: 280% 100%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shine 7s linear infinite;
+    }
+    .role {
+      font-size: 22px; color: #cfe8ff; min-height: 34px; margin-bottom: 16px; font-weight: 600;
+    }
+    .role::after { content: "_"; color: var(--ice); animation: blink 1s step-end infinite; }
+    .lead { color: var(--mute); font-size: 17px; max-width: 620px; margin-bottom: 26px; }
+    .lead b { color: #fff; }
+    .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+    .btn {
+      border: 0; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 18px; border-radius: 14px; font-weight: 700; transition: .3s;
+      color: #061018;
+    }
+    .btn.primary { background: linear-gradient(135deg, var(--ice), var(--blue)); box-shadow: 0 0 24px rgba(122,246,255,.25); }
+    .btn.ghost { background: transparent; color: #fff; border: 1px solid var(--line); }
+    .btn:hover { transform: translateY(-4px) scale(1.02); }
+    .quick { display: flex; gap: 18px; flex-wrap: wrap; color: var(--mute); font-size: 13px; }
+    .quick i { color: var(--ice); margin-right: 6px; }
+
+    .holo {
+      position: relative; width: min(420px, 100%); justify-self: end;
+    }
+    .ring {
+      position: relative; aspect-ratio: 1; border-radius: 50%;
+      padding: 10px;
+      background: conic-gradient(from var(--a, 0deg), var(--ice), var(--blue), var(--violet), var(--pink), var(--ice));
+      animation: spin 10s linear infinite;
+    }
+    .core {
+      width: 100%; height: 100%; border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(122,246,255,.18), transparent 28%),
+        linear-gradient(180deg, #12182c, #070910);
+      display: grid; place-items: center;
+      animation: spin 10s linear infinite reverse;
+      border: 1px solid rgba(255,255,255,.05);
+    }
+    .mono {
+      width: 78%; height: 78%; border-radius: 50%;
+      display: grid; place-items: center;
+      background: radial-gradient(circle at 35% 30%, #1c2744, #070b16 70%);
+      border: 1px solid rgba(122,246,255,.2);
+      overflow: hidden;
+    }
+    .mono img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+    }
+    .floaty {
+      position: absolute; padding: 10px 12px; border-radius: 14px;
+      background: var(--panel); border: 1px solid var(--line);
+      backdrop-filter: blur(12px); box-shadow: var(--shadow);
+      animation: float 5s ease-in-out infinite;
+    }
+    .f1 { top: 18px; left: -34px; }
+    .f2 { right: -18px; top: 46%; animation-delay: -1.6s; }
+    .f3 { left: 10px; bottom: 18px; animation-delay: -3s; }
+    .floaty b { display: block; color: var(--ice); }
+
+    .marquee-wrap {
+      border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      overflow: hidden; padding: 14px 0; margin-bottom: 20px;
+      background: rgba(255,255,255,.015);
+    }
+    .marquee { display: flex; gap: 40px; width: max-content; animation: slide 22s linear infinite; }
+    .marquee span { font-family: Syne, sans-serif; letter-spacing: 1px; color: #d7e7ff; }
+    .marquee i { color: var(--ice); margin-right: 10px; }
+
+    section { padding: 88px 0; }
+    .mod {
+      font-family: 'IBM Plex Mono', monospace; color: var(--ice);
+      font-size: 12px; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    h2 {
+      font-family: Syne, sans-serif; font-size: clamp(30px, 5vw, 52px);
+      line-height: 1; margin-bottom: 12px;
+    }
+    .sub { color: var(--mute); max-width: 680px; margin-bottom: 28px; font-size: 17px; }
+
+    .reveal { opacity: 0; transform: translateY(40px); transition: .85s cubic-bezier(.16,1,.3,1); }
+    .reveal.show { opacity: 1; transform: none; }
+
+    .grid-2 { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    .card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 24px;
+      padding: 24px; position: relative; overflow: hidden; backdrop-filter: blur(12px);
+    }
+    .card.glow:hover { border-color: rgba(122,246,255,.45); box-shadow: 0 0 0 1px rgba(122,246,255,.08), var(--shadow); transform: translateY(-6px); }
+    .card { transition: .35s; }
+    .card::after {
+      content: ""; position: absolute; width: 180px; height: 180px; right: -60px; top: -60px;
+      background: radial-gradient(circle, rgba(122,246,255,.12), transparent 70%);
+    }
+
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .stat {
+      padding: 16px; border-radius: 16px; background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+    }
+    .stat em {
+      font-style: normal; font-family: Syne, sans-serif; font-size: 30px; color: var(--ice);
+    }
+    .stat span { display: block; color: var(--mute); font-size: 13px; }
+
+    .why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .why article { min-height: 220px; }
+    .ico {
+      width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(122,246,255,.16), rgba(155,107,255,.16));
+      color: var(--ice); margin-bottom: 14px; font-size: 18px;
+    }
+
+    .timeline { display: grid; gap: 14px; border-left: 2px solid rgba(122,246,255,.2); padding-left: 22px; }
+    .tl { position: relative; }
+    .tl::before {
+      content: ""; position: absolute; left: -29px; top: 20px;
+      width: 12px; height: 12px; border-radius: 50%; background: var(--ice);
+      box-shadow: 0 0 14px var(--ice);
+    }
+
+    .skill { padding: 20px; }
+    .skill .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .bar { height: 8px; background: #171c2e; border-radius: 99px; overflow: hidden; }
+    .bar i {
+      display: block; height: 100%; width: 0; border-radius: inherit;
+      background: linear-gradient(90deg, var(--ice), var(--violet));
+      transition: width 1.6s ease;
+    }
+    .skill.show i { width: var(--p); }
+    .skill p { color: var(--mute); font-size: 14px; margin-top: 10px; }
+
+    .proj {
+      display: flex; flex-direction: column; min-height: 100%;
+    }
+    .proj-viz {
+      height: 150px; border-radius: 16px; margin-bottom: 16px; display: grid; place-items: center;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(122,246,255,.22), transparent 36%),
+        radial-gradient(circle at 80% 80%, rgba(155,107,255,.22), transparent 36%),
+        #0b1020;
+      position: relative; overflow: hidden;
+    }
+    .proj-viz i { font-size: 42px; color: var(--ice); animation: float 4s ease-in-out infinite; }
+    .scan {
+      position: absolute; inset: 0 auto 0 0; width: 30%;
+      background: linear-gradient(90deg, transparent, rgba(122,246,255,.12), transparent);
+      animation: scan 3.4s linear infinite;
+    }
+    .tag {
+      display: inline-block; font-size: 11px; padding: 5px 8px; border-radius: 999px;
+      border: 1px solid var(--line); color: #cfe8ff; margin: 0 6px 6px 0;
+    }
+    .proj h3 { margin: 4px 0 8px; font-size: 22px; }
+    .proj p { color: var(--mute); font-size: 14.5px; }
+
+    .chip-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line);
+      background: rgba(255,255,255,.03); font-size: 13px;
+    }
+
+    .road { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .road .card h3 { color: var(--ice); margin-bottom: 10px; }
+    .road li { margin: 8px 0 8px 18px; color: #d7e2f7; }
+
+    .quote {
+      text-align: center; padding: 48px 28px; border-radius: 30px;
+      background:
+        linear-gradient(180deg, rgba(122,246,255,.06), rgba(155,107,255,.08)),
+        var(--panel);
+      border: 1px solid var(--line);
+    }
+    .quote p { font-size: clamp(20px, 3vw, 30px); font-family: Syne, sans-serif; line-height: 1.25; max-width: 900px; margin: 0 auto 12px; }
+
+    .contact-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 16px; }
+    .contact-grid a, .mini {
+      display: block; text-decoration: none; color: inherit; padding: 18px;
+      border-radius: 18px; background: rgba(255,255,255,.03); border: 1px solid var(--line);
+      margin-bottom: 12px; transition: .3s;
+    }
+    .contact-grid a:hover { transform: translateX(6px); border-color: var(--ice); }
+    .contact-grid i { color: var(--ice); width: 22px; }
+    form { display: grid; gap: 12px; }
+    input, textarea {
+      width: 100%; background: #090c16; border: 1px solid var(--line); color: #fff;
+      border-radius: 14px; padding: 13px 14px; font: inherit; outline: none;
+    }
+    input:focus, textarea:focus { border-color: var(--ice); }
+    textarea { min-height: 120px; resize: vertical; }
+
+    footer {
+      border-top: 1px solid var(--line); padding: 28px 0 50px;
+      display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      color: var(--mute); font-size: 13px;
+    }
+
+
+
+    /* ===== THREE.JS WEBGL LAYER ===== */
+    #threeBg{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      z-index:0;
+      pointer-events:none;
+      opacity:.82;
+    }
+    .webgl-vignette{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 50% 45%, transparent 25%, rgba(2,5,12,.18) 62%, rgba(2,5,12,.62) 100%),
+        linear-gradient(180deg,rgba(2,5,12,.12),transparent 35%,rgba(2,5,12,.32));
+    }
+    .webgl-label{
+      position:absolute;
+      right:5%;
+      bottom:7%;
+      z-index:4;
+      font-family:'IBM Plex Mono',monospace;
+      font-size:9px;
+      letter-spacing:1.7px;
+      color:rgba(122,246,255,.55);
+      padding:8px 10px;
+      border:1px solid rgba(122,246,255,.12);
+      background:rgba(4,10,18,.35);
+      backdrop-filter:blur(8px);
+      border-radius:9px;
+      animation:webglPulse 3s ease-in-out infinite;
+    }
+    @keyframes webglPulse{50%{opacity:.45;transform:translateY(-3px)}}
+    @media(max-width:980px){#threeBg{opacity:.58}.webgl-label{display:none}}
+    @media(prefers-reduced-motion:reduce){#threeBg{display:none}}
+
+    /* ===== ENHANCED NEURAL BACKGROUND ===== */
+    #aurora,.ambient-grid,.scanlines,.mouse-glow,.meteor-field,.energy-orbit{
+      position:fixed;inset:0;pointer-events:none;
+    }
+    #aurora{z-index:0;mix-blend-mode:screen;opacity:.52}
+    .ambient-grid{
+      z-index:0;opacity:.22;
+      background:
+        linear-gradient(rgba(122,246,255,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(155,107,255,.035) 1px,transparent 1px);
+      background-size:90px 90px;
+      transform:perspective(500px) rotateX(58deg) scale(1.8) translateY(18%);
+      transform-origin:center bottom;
+      mask-image:linear-gradient(to top,rgba(0,0,0,.9),transparent 72%);
+      animation:gridMove 18s linear infinite;
+    }
+    .scanlines{
+      z-index:1;opacity:.055;
+      background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,rgba(255,255,255,.12) 4px);
+      animation:scanDrift 9s linear infinite;
+    }
+    .mouse-glow{
+      z-index:1;width:520px;height:520px;inset:auto;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(83,239,255,.13),rgba(83,239,255,.035) 28%,transparent 70%);
+      filter:blur(16px);transform:translate(-50%,-50%);
+      transition:left .12s ease-out,top .12s ease-out;
+    }
+    .energy-orbit{
+      z-index:0;inset:auto;border:1px solid rgba(83,239,255,.08);
+      border-radius:50%;mix-blend-mode:screen;
+    }
+    .eo1{width:720px;height:720px;left:-250px;top:12%;animation:orbitDrift 22s linear infinite}
+    .eo2{width:560px;height:560px;right:-190px;top:52%;border-color:rgba(155,107,255,.09);animation:orbitDrift 17s linear infinite reverse}
+    .eo3{width:360px;height:360px;left:38%;bottom:-240px;border-color:rgba(255,93,206,.07);animation:orbitDrift 13s linear infinite}
+    .energy-orbit:after{
+      content:"";position:absolute;width:8px;height:8px;border-radius:50%;
+      background:var(--ice);box-shadow:0 0 25px var(--ice),0 0 55px var(--blue);
+      top:50%;left:0;transform:translate(-50%,-50%);
+    }
+    .meteor-field{z-index:1;overflow:hidden}
+    .meteor{
+      position:absolute;width:1px;height:120px;
+      background:linear-gradient(to bottom,transparent,rgba(122,246,255,.8),transparent);
+      transform:rotate(35deg);opacity:0;
+      animation:meteorFall linear infinite;
+      filter:drop-shadow(0 0 6px rgba(122,246,255,.6));
+    }
+    .meteor.pink{background:linear-gradient(to bottom,transparent,rgba(255,93,206,.8),transparent)}
+    .meteor.violet{background:linear-gradient(to bottom,transparent,rgba(155,107,255,.8),transparent)}
+    @keyframes gridMove{to{background-position:0 90px,90px 0}}
+    @keyframes scanDrift{to{background-position:0 70px}}
+    @keyframes orbitDrift{to{transform:rotate(360deg) translateX(35px) rotate(-360deg)}}
+    @keyframes meteorFall{
+      0%{transform:translate3d(0,-180px,0) rotate(35deg);opacity:0}
+      8%{opacity:.9}
+      55%{opacity:.8}
+      100%{transform:translate3d(420px,120vh,0) rotate(35deg);opacity:0}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
+      .mouse-glow,.meteor-field,.energy-orbit{display:none}
+    }
+
+    @keyframes load { to { width: 100%; } }
+    @keyframes shine { to { background-position: 280% 0; } }
+    @keyframes blink { 50% { opacity: 0; } }
+    @keyframes pulse { 50% { transform: scale(1.35); opacity: .55; } }
+    @keyframes float { 50% { transform: translateY(-10px); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes drift { to { transform: translate(40px, -50px) scale(1.12); } }
+    @keyframes slide { to { transform: translateX(-50%); } }
+    @keyframes scan { from { transform: translateX(-120%); } to { transform: translateX(420%); } }
+
+    @media (max-width: 980px) {
+      body { cursor: auto; }
+      .cursor, .cursor-dot, .rail { display: none; }
+      .links { display: none; }
+      .hero, .grid-2, .grid-3, .grid-4, .why, .road, .contact-grid { grid-template-columns: 1fr; }
+      .holo { justify-self: center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loader">
+    <div class="boot">
+      <b>SOMESHWARAN.SYS</b>
+      <p id="bootText">booting neural interface...</p>
+      <div class="boot-bar"><span></span></div>
+    </div>
+  </div>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="dot"></div>
+  <div class="progress" id="progress"></div>
+  <canvas id="stars"></canvas>
+  <canvas id="net"></canvas>
+  <canvas id="threeBg"></canvas>
+  <canvas id="aurora"></canvas>
+  <div class="ambient-grid"></div>
+  <div class="scanlines"></div>
+  <div class="mouse-glow" id="mouseGlow"></div>
+  <div class="energy-orbit eo1"></div>
+  <div class="energy-orbit eo2"></div>
+  <div class="energy-orbit eo3"></div>
+  <div class="meteor-field" id="meteorField"></div>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <header class="hud">
+    <div class="brand">
+      <div class="mark">SG</div>
+      <div>SOMESHWARAN G<small>AI / ML PORTFOLIO</small></div>
+    </div>
+    <ul class="links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#path">Path</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a class="nav-cta" href="#contact">Connect</a>
+  </header>
+
+  <nav class="rail">
+    <a href="#top" class="active"><span>00 Intro</span></a>
+    <a href="#about"><span>01 About</span></a>
+    <a href="#why"><span>02 Why AI</span></a>
+    <a href="#path"><span>03 Education</span></a>
+    <a href="#skills"><span>04 Skills</span></a>
+    <a href="#projects"><span>05 Projects</span></a>
+    <a href="#wins"><span>06 Growth</span></a>
+    <a href="#roadmap"><span>07 Roadmap</span></a>
+    <a href="#contact"><span>08 Contact</span></a>
+  </nav>
+
+  <div class="webgl-vignette"></div>
+  <div class="webgl-label">WEBGL // NEURAL FIELD ACTIVE</div>
+  <div class="wrap" id="top">
+    <section class="hero">
+      <div>
+        <div class="eyebrow"><span class="live"></span> Neural interface online • AI / ML learning mode • Tamil Nadu</div>
+        <h1>SOMESHWARAN<br /><span class="glitch">G</span></h1>
+        <div class="role" id="role"></div>
+        <p class="lead">
+          A dedicated and enthusiastic <b>12th standard Science student</b> with a deep curiosity for
+          Artificial Intelligence and Machine Learning. I love learning new technologies,
+          solving real problems, and turning simple ideas into working Python programs.
+          My mission is to grow every day and become an engineer who builds useful, human-centered AI.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="#projects"><i class="fa-solid fa-microchip"></i> Enter the Lab</a>
+          <a class="btn ghost" href="#roadmap"><i class="fa-solid fa-route"></i> View Roadmap</a>
+        </div>
+        <div class="quick">
+          <span><i class="fa-solid fa-phone"></i>+91 93618 81833</span>
+          <span><i class="fa-solid fa-envelope"></i>gsomeshwaran4@gmail.com</span>
+          <span><i class="fa-solid fa-location-dot"></i>Tamil Nadu, India</span>
+        </div>
+      </div>
+      <div class="holo">
+        <div class="ring">
+          <div class="core"><div class="mono"><img src="pic.png" alt="Someshwaran G" /></div></div>
+        </div>
+        <div class="floaty f1"><b>Python</b><small>Beginner Builder</small></div>
+        <div class="floaty f2"><b>AI + ML</b><small>Career North Star</small></div>
+        <div class="floaty f3"><b>2025–26</b><small>Class 12 Science</small></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="marquee-wrap">
+    <div class="marquee" id="marquee"></div>
+  </div>
+
+  <div class="wrap">
+    <section id="about">
+      <div class="mod reveal">MODULE 01 // IDENTITY</div>
+      <h2 class="reveal">A student who treats curiosity like a superpower.</h2>
+      <p class="sub reveal">I am not waiting for college to start learning. I am building my foundation now — logic, discipline, programming and research.</p>
+      <div class="grid-2">
+        <article class="card reveal">
+          <h3 style="margin-bottom:12px">The story so far</h3>
+          <p style="color:var(--mute);margin-bottom:12px">
+            I am Someshwaran G, a Class 12 Science stream student from Tamil Nadu. While I study Physics,
+            Chemistry, Mathematics, Computer Science and English, I spend extra hours exploring how computers
+            can think, decide and help people. Artificial Intelligence feels like the most exciting language
+            of the future — and I want to speak it fluently.
+          </p>
+          <p style="color:var(--mute);margin-bottom:12px">
+            I started with simple Python programs because I wanted to see ideas come alive on the screen.
+            A calculator taught me functions. A quiz game taught me conditions and scoring. A marksheet
+            program taught me how data can be organized and converted into useful results. These are small
+            projects, but they are honest proof of a habit I value: <b style="color:#fff">learn, build, improve, repeat</b>.
+          </p>
+          <p style="color:var(--mute)">
+            I am a consistent learner. I participate in school events, practice logical thinking, use the
+            internet for research, and keep stretching my skills instead of staying inside the textbook.
+            My long-term goal is to become an Artificial Intelligence & Machine Learning Engineer who
+            creates solutions with a positive impact.
+          </p>
+        </article>
+        <aside class="card reveal">
+          <div class="stats">
+            <div class="stat"><em data-count="12">0</em><span>Current Standard</span></div>
+            <div class="stat"><em id="year">0</em><span>Birth Year Focus</span></div>
+            <div class="stat"><em data-count="3">0</em><span>Python Projects</span></div>
+            <div class="stat"><em data-count="6">0</em><span>Core Skill Areas</span></div>
+          </div>
+          <div style="margin-top:18px" class="chip-cloud">
+            <span class="chip">DOB: 12 May 2010</span>
+            <span class="chip">Science Stream</span>
+            <span class="chip">Tamil Nadu</span>
+            <span class="chip">Target: B.Tech AI & ML</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="why">
+      <div class="mod reveal">MODULE 02 // PURPOSE</div>
+      <h2 class="reveal">Why Artificial Intelligence?</h2>
+      <p class="sub reveal">I don’t see AI as science fiction. I see it as a toolkit for better decisions, better learning and better lives.</p>
+      <div class="why">
+        <article class="card glow reveal">
+          <div class="ico"><i class="fa-solid fa-brain"></i></div>
+          <h3>Intelligence that helps</h3>
+          <p style="color:var(--mute);margin-top:8px">I want to build systems that reduce human effort, detect patterns people miss, and support students, doctors, farmers and creators — not replace them.</p>
+        </article>
+        <article class="card glow reveal">
+          <div class="ico"><i class="fa-solid fa-code"></i></div>
+          <h3>Code is creative</h3>
+          <p style="color:var(--mute);margin-top:8px">Programming feels like art with logic. One idea becomes a function, a function becomes a tool, and a tool can become a product that someone actually uses.</p>
+        </article>
+        <article class="card glow reveal">
+          <div class="ico"><i class="fa-solid fa-seedling"></i></div>
+          <h3>Start early, grow deep</h3>
+          <p style="color:var(--mute);margin-top:8px">Class 12 is the perfect time to build fundamentals. If I master math, logic and Python now, college becomes an acceleration — not a starting line.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="path">
+      <div class="mod reveal">MODULE 03 // EDUCATION</div>
+      <h2 class="reveal">Academic foundation</h2>
+      <p class="sub reveal">Science stream training with a clear destination: B.Tech in Artificial Intelligence & Machine Learning.</p>
+      <div class="grid-2">
+        <div class="timeline">
+          <article class="card tl reveal">
+            <div class="mod">NOW</div>
+            <h3>12th Standard — Science Stream</h3>
+            <p style="color:var(--ice);margin:6px 0 10px">Expected year of passing: 2025 – 2026</p>
+            <p style="color:var(--mute)">I am currently strengthening my academic core while exploring programming after class. This year is about discipline, conceptual clarity and building a portfolio mindset.</p>
+            <div class="chip-cloud" style="margin-top:14px">
+              <span class="chip">Physics</span><span class="chip">Chemistry</span><span class="chip">Mathematics</span>
+              <span class="chip">Computer Science</span><span class="chip">English</span>
+            </div>
+          </article>
+          <article class="card tl reveal">
+            <div class="mod">NEXT</div>
+            <h3>Target Degree — B.Tech AI & ML</h3>
+            <p style="color:var(--mute);margin-top:8px">I am preparing myself for undergraduate studies in Artificial Intelligence and Machine Learning. I want a college environment where I can work on real datasets, research-minded projects and internships.</p>
+          </article>
+        </div>
+        <div class="card reveal">
+          <h3 style="margin-bottom:12px">How each subject fuels AI</h3>
+          <p style="color:var(--mute);margin-bottom:10px"><b style="color:#fff">Mathematics</b> — the grammar of models, patterns, probability and optimization.</p>
+          <p style="color:var(--mute);margin-bottom:10px"><b style="color:#fff">Physics</b> — trains me to model the real world, isolate variables and think in systems.</p>
+          <p style="color:var(--mute);margin-bottom:10px"><b style="color:#fff">Chemistry</b> — builds experimental thinking: observe, hypothesize, test, refine.</p>
+          <p style="color:var(--mute);margin-bottom:10px"><b style="color:#fff">Computer Science</b> — algorithms, logic, data and the architecture behind programs.</p>
+          <p style="color:var(--mute)"><b style="color:#fff">English</b> — because great engineers must also explain ideas clearly to teams and users.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="mod reveal">MODULE 04 // CAPABILITIES</div>
+      <h2 class="reveal">Skills in motion</h2>
+      <p class="sub reveal">I am a beginner with high intensity. Every skill below is active, practiced and being upgraded.</p>
+      <div class="grid-3">
+        <article class="card skill reveal" style="--p:62%"><div class="top"><h3>Python</h3><span>Beginner</span></div><div class="bar"><i></i></div><p>Variables, input/output, conditions, loops, functions and small terminal applications. My main language for building.</p></article>
+        <article class="card skill reveal" style="--p:70%"><div class="top"><h3>Computer Fundamentals</h3><span>Practical</span></div><div class="bar"><i></i></div><p>Comfortable with files, folders, settings, browsing, basic troubleshooting and using a computer as a daily learning machine.</p></article>
+        <article class="card skill reveal" style="--p:80%"><div class="top"><h3>Problem Solving</h3><span>Strong habit</span></div><div class="bar"><i></i></div><p>I break a challenge into smaller pieces, try a solution, debug, and try again. I enjoy the moment a program finally behaves.</p></article>
+        <article class="card skill reveal" style="--p:76%"><div class="top"><h3>Logical Thinking</h3><span>Growing</span></div><div class="bar"><i></i></div><p>If-else flow, stepwise reasoning and tracing code in my head before I type. Logic is the muscle I train every day.</p></article>
+        <article class="card skill reveal" style="--p:58%"><div class="top"><h3>Data Handling</h3><span>Basic</span></div><div class="bar"><i></i></div><p>Collecting inputs, storing values, calculating totals/percentages and presenting a clean result — the seed of data work.</p></article>
+        <article class="card skill reveal" style="--p:84%"><div class="top"><h3>Internet & Research</h3><span>Active</span></div><div class="bar"><i></i></div><p>I search documentation, tutorials and articles, compare explanations, and convert what I read into practice.</p></article>
+      </div>
+      <div class="grid-2" style="margin-top:16px">
+        <article class="card reveal">
+          <h3 style="margin-bottom:10px">Also in my toolkit</h3>
+          <div class="chip-cloud">
+            <span class="chip">Microsoft Office</span>
+            <span class="chip">Word / Docs thinking</span>
+            <span class="chip">Basic spreadsheets</span>
+            <span class="chip">Presentations</span>
+            <span class="chip">Google Search mastery</span>
+            <span class="chip">YouTube learning</span>
+            <span class="chip">Note making</span>
+            <span class="chip">Self practice</span>
+          </div>
+        </article>
+        <article class="card reveal">
+          <h3 style="margin-bottom:10px">Languages</h3>
+          <p style="color:var(--mute);margin-bottom:8px"><b style="color:#fff">Tamil</b> — Native. My first language and the voice I think in.</p>
+          <p style="color:var(--mute)"><b style="color:#fff">English</b> — Proficient. I use it to study technology, write about my work and communicate professionally.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="mod reveal">MODULE 05 // BUILD LOG</div>
+      <h2 class="reveal">Projects that taught me how to think</h2>
+      <p class="sub reveal">Three completed Python builds. More experiments are in progress. Each project below includes the problem, the logic and the lesson.</p>
+      <div class="grid-3">
+        <article class="card proj glow reveal">
+          <div class="proj-viz"><div class="scan"></div><i class="fa-solid fa-calculator"></i></div>
+          <span class="tag">Python</span><span class="tag">Functions</span><span class="tag">CLI</span>
+          <h3>Simple Calculator</h3>
+          <p>A command-line calculator that accepts two numbers and an operator, then returns addition, subtraction, multiplication or division. I used functions to keep each operation clean and added basic validation so the program does not collapse on bad input.</p>
+          <p style="margin-top:10px;color:#cfe8ff">Lesson: reusable functions make programs easier to extend.</p>
+        </article>
+        <article class="card proj glow reveal">
+          <div class="proj-viz"><div class="scan"></div><i class="fa-solid fa-gamepad"></i></div>
+          <span class="tag">Python</span><span class="tag">Loops</span><span class="tag">Conditions</span>
+          <h3>Quiz Game</h3>
+          <p>An interactive quiz that asks questions, checks answers, updates a score and can be replayed. I designed it to feel like a tiny product: welcome message, question flow, final result and a chance to try again.</p>
+          <p style="margin-top:10px;color:#cfe8ff">Lesson: user experience matters even in a terminal.</p>
+        </article>
+        <article class="card proj glow reveal">
+          <div class="proj-viz"><div class="scan"></div><i class="fa-solid fa-file-invoice"></i></div>
+          <span class="tag">Python</span><span class="tag">Data</span><span class="tag">Grading logic</span>
+          <h3>Student Marksheet</h3>
+          <p>A marksheet generator that collects subject marks, computes total and percentage, and assigns a grade. This was my first time treating a program like a school-office tool instead of a toy.</p>
+          <p style="margin-top:10px;color:#cfe8ff">Lesson: data becomes valuable only after it is structured.</p>
+        </article>
+      </div>
+      <article class="card reveal" style="margin-top:16px">
+        <h3 style="margin-bottom:8px">Currently in the lab</h3>
+        <p style="color:var(--mute);margin-bottom:12px">I am expanding beyond these three builds. The next experiments I am exploring are number-guessing logic, better input handling, mini menu-driven apps, and the first steps toward organizing code like a future data/AI student.</p>
+        <div class="chip-cloud">
+          <span class="chip">More Python practice</span>
+          <span class="chip">Cleaner program structure</span>
+          <span class="chip">Mini menu systems</span>
+          <span class="chip">Reading tech blogs</span>
+          <span class="chip">Math for ML later</span>
+        </div>
+      </article>
+    </section>
+
+    <section id="wins">
+      <div class="mod reveal">MODULE 06 // SIGNAL</div>
+      <h2 class="reveal">Growth, character, interests</h2>
+      <div class="grid-3">
+        <article class="card reveal">
+          <div class="ico"><i class="fa-solid fa-trophy"></i></div>
+          <h3>Achievements</h3>
+          <p style="color:var(--mute);margin:10px 0">Active participant in school events and competitions — I show up, contribute and learn from the stage as much as from the classroom.</p>
+          <p style="color:var(--mute);margin:10px 0">Recognized by my own standard as a consistent learner with a genuine passion for technology.</p>
+          <p style="color:var(--mute);margin:10px 0">Continuously improving programming skills through repetition, debugging and new challenges.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><i class="fa-solid fa-heart"></i></div>
+          <h3>Interests</h3>
+          <p style="color:var(--mute);margin-top:10px">Artificial Intelligence, Machine Learning, Programming, Data Science, reading technology blogs, and listening to music while I think through a problem. Music keeps my focus calm. Blogs keep my map of the industry updated.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ico"><i class="fa-solid fa-compass"></i></div>
+          <h3>How I work</h3>
+          <p style="color:var(--mute);margin-top:10px">I prefer clarity over speed, notes over guesswork, and small daily progress over rare bursts. I ask better questions, search carefully, write the code, break it, fix it, and then explain it back to myself.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <div class="mod reveal">MODULE 07 // TRAJECTORY</div>
+      <h2 class="reveal">The roadmap I am actually following</h2>
+      <p class="sub reveal">A realistic plan from Class 12 beginner to future AI & ML engineer.</p>
+      <div class="road">
+        <article class="card reveal">
+          <h3>Near term</h3>
+          <ul>
+            <li>Master Python basics with many small programs</li>
+            <li>Strengthen Mathematics and logical reasoning</li>
+            <li>Finish Class 12 with conceptual depth</li>
+            <li>Publish more practice projects</li>
+            <li>Improve English technical communication</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <h3>Mid term</h3>
+          <ul>
+            <li>Enter B.Tech in AI & ML</li>
+            <li>Learn data analysis and visualization</li>
+            <li>Study statistics, linear algebra and probability</li>
+            <li>Build dataset-based mini projects</li>
+            <li>Contribute to campus clubs and hackathons</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <h3>North star</h3>
+          <ul>
+            <li>Become an AI & ML Engineer</li>
+            <li>Design useful, responsible models</li>
+            <li>Work on real-world impact problems</li>
+            <li>Keep learning after every project</li>
+            <li>Help the next student who starts like me</li>
+          </ul>
+        </article>
+      </div>
+      <div class="quote reveal" style="margin-top:22px">
+        <div class="mod">CAREER GOAL</div>
+        <p>To become a successful Artificial Intelligence & Machine Learning Engineer and contribute to innovative solutions that make a positive impact on the world.</p>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="mod reveal">MODULE 08 // LINK</div>
+      <h2 class="reveal">Let’s connect</h2>
+      <p class="sub reveal">For academic guidance, learning conversations, internships of the future, or a simple hello — I am just a message away.</p>
+      <div class="contact-grid">
+        <div class="reveal">
+          <a href="tel:+919361881833"><i class="fa-solid fa-phone"></i> +91 93618 81833</a>
+          <a href="mailto:gsomeshwaran4@gmail.com"><i class="fa-solid fa-envelope"></i> gsomeshwaran4@gmail.com</a>
+          <div class="mini"><i class="fa-solid fa-location-dot"></i> Tamil Nadu, India</div>
+          <div class="mini"><i class="fa-solid fa-calendar"></i> Born 12 May 2010</div>
+        </div>
+        <form class="card reveal" onsubmit="event.preventDefault(); window.location.href='mailto:gsomeshwaran4@gmail.com?subject=' + encodeURIComponent(this.subject.value) + '&body=' + encodeURIComponent(this.message.value + '\\n\\nFrom: ' + this.name.value);">
+          <input name="name" placeholder="Your name" required />
+          <input name="subject" placeholder="Subject" required />
+          <textarea name="message" placeholder="Write a message..." required></textarea>
+          <button class="btn primary" type="submit"><i class="fa-solid fa-paper-plane"></i> Send Message</button>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      <div>© <span id="cy"></span> Someshwaran G • Aspiring AI & ML Engineer</div>
+      <div>I hereby declare that the information above is true and correct to the best of my knowledge.</div>
+    </footer>
+  </div>
+
+  <script>
+    const bootLines = [
+      'booting neural interface...',
+      'loading student profile...',
+      'compiling curiosity.exe...',
+      'syncing python lab...',
+      'portfolio ready.'
+    ];
+    let bi = 0;
+    const bootTimer = setInterval(() => {
+      bi++;
+      if (bootLines[bi]) document.getElementById('bootText').textContent = bootLines[bi];
+      if (bi >= bootLines.length - 1) clearInterval(bootTimer);
+    }, 380);
+    window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').classList.add('hide'), 2200));
+
+    const cur = document.getElementById('cursor');
+    const dot = document.getElementById('dot');
+    let mx = 0, my = 0, cx = 0, cy = 0;
+    window.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    });
+    (function loopCursor() {
+      cx += (mx - cx) * .18; cy += (my - cy) * .18;
+      cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
+      requestAnimationFrame(loopCursor);
+    })();
+    document.querySelectorAll('a, button, .card').forEach(el => {
+      el.addEventListener('mouseenter', () => cur.classList.add('grow'));
+      el.addEventListener('mouseleave', () => cur.classList.remove('grow'));
+    });
+
+    const phrases = [
+      'Aspiring Artificial Intelligence Engineer',
+      'Aspiring Machine Learning Engineer',
+      'Class 12 Science • Builder in training',
+      'Python beginner with serious intent',
+      'Learning. Building. Improving.'
+    ];
+    const role = document.getElementById('role');
+    let pi = 0, ci = 0, del = false;
+    function type() {
+      const w = phrases[pi];
+      role.textContent = w.slice(0, ci);
+      if (!del && ci < w.length) { ci++; setTimeout(type, 64); }
+      else if (!del) { del = true; setTimeout(type, 1400); }
+      else if (ci > 0) { ci--; setTimeout(type, 28); }
+      else { del = false; pi = (pi + 1) % phrases.length; setTimeout(type, 220); }
+    }
+    type();
+
+    const items = ['PYTHON','AI','MACHINE LEARNING','LOGIC','DATA','RESEARCH','SCIENCE STREAM','PROBLEM SOLVING','COMPUTER SCIENCE','MUSIC + FOCUS','FUTURE ENGINEER','TAMIL NADU'];
+    document.getElementById('marquee').innerHTML = [...items, ...items].map(t => `<span><i class="fa-solid fa-diamond"></i> ${t}</span>`).join('');
+
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+    }, { threshold: .14 });
+    document.querySelectorAll('.reveal, .skill').forEach(el => io.observe(el));
+
+    const nums = document.querySelectorAll('[data-count]');
+    const nio = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting || e.target.dataset.done) return;
+        e.target.dataset.done = 1;
+        const end = +e.target.dataset.count;
+        const t0 = performance.now();
+        const tick = now => {
+          const p = Math.min((now - t0) / 1100, 1);
+          e.target.textContent = Math.round(end * p);
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: .6 });
+    nums.forEach(n => nio.observe(n));
+    document.getElementById('year').textContent = '2010';
+    document.getElementById('cy').textContent = new Date().getFullYear();
+
+    const sections = [...document.querySelectorAll('#top, section[id]')];
+    const dots = [...document.querySelectorAll('.rail a')];
+    window.addEventListener('scroll', () => {
+      const max = document.body.scrollHeight - innerHeight;
+      document.getElementById('progress').style.width = (scrollY / max * 100) + '%';
+      let idx = 0;
+      sections.forEach((s, i) => { if (scrollY + 140 >= s.offsetTop) idx = i; });
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    });
+
+    const stars = document.getElementById('stars');
+    const sctx = stars.getContext('2d');
+    const net = document.getElementById('net');
+    const nctx = net.getContext('2d');
+    let w, h, pts, flakes;
+    function resize() {
+      w = stars.width = net.width = innerWidth;
+      h = stars.height = net.height = innerHeight;
+      flakes = Array.from({length: 90}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.4, v: .15 + Math.random()*.45 }));
+      pts = Array.from({length: 60}, () => ({ x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-.5)*.35, vy: (Math.random()-.5)*.35 }));
+    }
+    function draw() {
+      sctx.clearRect(0,0,w,h);
+      nctx.clearRect(0,0,w,h);
+      flakes.forEach(f => {
+        f.y += f.v; if (f.y > h) f.y = 0;
+        sctx.fillStyle = 'rgba(210,230,255,.55)';
+        sctx.beginPath(); sctx.arc(f.x, f.y, f.r, 0, Math.PI*2); sctx.fill();
+      });
+      pts.forEach((p, i) => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+        nctx.fillStyle = 'rgba(122,246,255,.75)';
+        nctx.beginPath(); nctx.arc(p.x, p.y, 1.3, 0, Math.PI*2); nctx.fill();
+        for (let j = i + 1; j < pts.length; j++) {
+          const o = pts[j], d = Math.hypot(p.x-o.x, p.y-o.y);
+          if (d < 130) {
+            nctx.strokeStyle = `rgba(122,246,255,${(1-d/130)*.14})`;
+            nctx.beginPath(); nctx.moveTo(p.x,p.y); nctx.lineTo(o.x,o.y); nctx.stroke();
+          }
+        }
+      });
+      requestAnimationFrame(draw);
+    }
+
+    // ===== Enhanced background animation system =====
+    const aurora = document.getElementById('aurora');
+    const actx = aurora.getContext('2d');
+    const mouseGlow = document.getElementById('mouseGlow');
+    const meteorField = document.getElementById('meteorField');
+    let aw=0, ah=0, auroraTime=0;
+
+    function resizeAurora(){
+      aw = aurora.width = innerWidth * devicePixelRatio;
+      ah = aurora.height = innerHeight * devicePixelRatio;
+      aurora.style.width = innerWidth + 'px';
+      aurora.style.height = innerHeight + 'px';
+      actx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    }
+    function drawAurora(){
+      const w=innerWidth,h=innerHeight;
+      actx.clearRect(0,0,w,h);
+      auroraTime += .006;
+      const waves=[
+        {y:.20,amp:85,speed:1.0,c1:'rgba(83,239,255,.075)',c2:'rgba(79,140,255,0)'},
+        {y:.46,amp:115,speed:-.72,c1:'rgba(155,107,255,.065)',c2:'rgba(255,93,206,0)'},
+        {y:.72,amp:90,speed:.58,c1:'rgba(61,255,176,.035)',c2:'rgba(83,239,255,0)'}
+      ];
+      waves.forEach((wv,k)=>{
+        const g=actx.createLinearGradient(0,h*wv.y-150,0,h*wv.y+160);
+        g.addColorStop(0,'transparent');g.addColorStop(.45,wv.c1);g.addColorStop(1,wv.c2);
+        actx.fillStyle=g;
+        actx.beginPath();actx.moveTo(0,h*wv.y);
+        for(let x=0;x<=w;x+=20){
+          const y=h*wv.y+
+            Math.sin(x*.006+auroraTime*wv.speed+k)*wv.amp+
+            Math.sin(x*.013-auroraTime*.7)*25;
+          actx.lineTo(x,y);
+        }
+        actx.lineTo(w,h);actx.lineTo(0,h);actx.closePath();actx.fill();
+      });
+      requestAnimationFrame(drawAurora);
+    }
+    resizeAurora();
+    addEventListener('resize',resizeAurora);
+    drawAurora();
+
+    // Cursor-following atmospheric light.
+    addEventListener('mousemove',e=>{
+      mouseGlow.style.left=e.clientX+'px';
+      mouseGlow.style.top=e.clientY+'px';
+    });
+
+    // Generate subtle meteors.
+    const meteorColors=['','pink','violet'];
+    for(let i=0;i<18;i++){
+      const m=document.createElement('i');
+      m.className='meteor '+meteorColors[i%meteorColors.length];
+      m.style.left=(Math.random()*105-5)+'%';
+      m.style.top=(-20-Math.random()*100)+'px';
+      m.style.height=(55+Math.random()*110)+'px';
+      m.style.animationDuration=(3.8+Math.random()*6)+'s';
+      m.style.animationDelay=(-Math.random()*9)+'s';
+      meteorField.appendChild(m);
+    }
+
+    addEventListener('resize', resize);
+    resize(); draw();
+  </script>
+</body>
+</html>
